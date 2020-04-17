@@ -1,26 +1,11 @@
 
-for ((i = 1310; i <= 10000; i += 15));
+for ((i = 1725; i <= 10000; i += 5));
 do
-	python run_pias_dctcp.py $(echo "scale=4; $i/10000" | bc) & 
-	python run_pias_dctcp_oversub.py $(echo "scale=4; $i/10000" | bc) &
-	python run_pias_heter.py $(echo "scale=4; $i/10000" | bc) &
-	wait
+	echo "$1" $(echo "scale=4; $i/10000" | bc)
+	python $1 $(echo "scale=4; $i/10000" | bc)
 	
-	python run_pias_vl2.py $(echo "scale=4; $i/10000" | bc) & 
-	python run_pias_dctcp.py $(echo "scale=4; ($i+5)/10000" | bc) & 
-	python run_pias_dctcp_oversub.py $(echo "scale=4; ($i+5)/10000" | bc) &
-	wait
-
-	python run_pias_heter.py $(echo "scale=4; ($i+5)/10000" | bc) &
-	python run_pias_vl2.py $(echo "scale=4; ($i+5)/10000" | bc) & 
-	python run_pias_dctcp.py $(echo "scale=4; ($i+10)/10000" | bc) & 
-	wait
-	
-	python run_pias_dctcp_oversub.py $(echo "scale=4; ($i+10)/10000" | bc) &
-	python run_pias_heter.py $(echo "scale=4; ($i+10)/10000" | bc) &
-	python run_pias_vl2.py $(echo "scale=4; ($i+10)/10000" | bc) & 
-	wait
-
-	mv g_* /mnt/hgfs/Downloads/results/
+	if [ "$1" == "run_pias_vl2.py" ]; then
+		mv g_*$(echo "scale=(3+($i%10)/5); $i/10000" | bc) /mnt/hgfs/Downloads/results/
+	fi
 done
 
